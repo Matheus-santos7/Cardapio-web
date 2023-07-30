@@ -311,6 +311,10 @@ cardapio.metodos = {
     },
 
     removeItemCarrinho: (id) => {
+        MEU_CARRINHO = $.grep(MEU_CARRINHO, (e, i) => { return e.id != id}); 
+        cardapio.metodos.carregarCarrinho()
+        
+        cardapio.metodos.atualizarBadgeTotal()
 
     },
 
