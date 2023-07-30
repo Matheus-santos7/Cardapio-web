@@ -36,7 +36,7 @@ b {
     font-family: 'PoppinsMedium', 'Rubik', sans-serif;
 }
 
-hidden {
+.hidden {
     display: none !important;
 }
 
@@ -111,8 +111,17 @@ a.navbar-brand {
 .btn-yellow {
     background-color: var(--color-primary);
     color: var(--color-white)!important;
-    border-radius: 20px;
-    padding: 15px 25px;
+    border-radius: 45px;
+    padding: 10px 15px;
+    font-size: 20px;
+    box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+.btn-green {
+    background-color: var(--color-green);
+    color: var(--color-white)!important;
+    border-radius: 45px;
+    padding: 10px 15px;
     font-size: 20px;
     box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
 }
@@ -526,9 +535,6 @@ footer {
     background: transparent;
 }
 
- 
-
-
 .etapas {
     display: flex;
 
@@ -729,8 +735,79 @@ select.form-control {
     margin-bottom: 0;
     color: var(--color-black);
 }
+.badge-total-carrinho {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    background-color: var(--color-secondary);
+    border-radius: 50px;
+    right: -5px;
+    top: -5px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.botao-carrinho {
+    position: fixed;
+    right: 30px;
+    bottom: 50px;
+    height: 50px;
+    width: 50px;
+    background-color: var(--color-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    box-shadow: 0px 10px -3px rgba(0, 0, 0, 0.1);
+    color: var(--color-black-heavy)!important;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 1;
 
+}
 
+/* Estilos para o parágrafo do carrinho vazio */
+.carrinho-vazio {
+    font-size: 16px;
+    text-align: center;
+    padding: 20px;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
+  
+  .carrinho-vazio i {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  
+  /* Estilos para o ícone do carrinho vazio - cor primária */
+  .carrinho-vazio i::before {
+    font-size: 40px;
+    color:var(--color-primary);
+  }
+  
+  /* Estilos para o texto do carrinho vazio - cor preta */
+  .carrinho-vazio span {
+    color: var(--color-black); /* Cor do texto (preto) */
+  }
 
-
+/* Estilos para a notificação futurista */
+.alert-futuristica {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--color-green);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 50px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    z-index: 9999;
+  }
+  
+  
