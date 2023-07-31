@@ -111,7 +111,8 @@ cardapio.metodos = {
                     item[0].qntd = qntdAtual;
                     MEU_CARRINHO.push(item[0]);
                 }
-                cardapio.metodos.mostrarNotificacao();
+
+                cardapio.metodos.mensagem('sucesso', 'Produto adicionado com sucesso');
                 $("#qntd-" + id).text(0);
 
                 cardapio.metodos.atualizarBadgeTotal();
@@ -144,23 +145,31 @@ cardapio.metodos = {
 
     // Função para mostrar a notificação
 
-        mostrarNotificacao: () => {
+    mensagem: (tipo, conteudo) => {
+        let mensagemElemento = document.createElement('div');
+        mensagemElemento.classList.add('mensagem');
 
-            const container = document.getElementById('container-mensagens');
-            // Crie um novo elemento de mensagem
-            const elementoMensagem = document.createElement('div');
-            elementoMensagem.classList.add('alert-futuristica');
-            elementoMensagem.textContent = 'Produto adicionado ao carrinho!';
+        // Defina as classes de estilo com base no tipo de mensagem
+        if (tipo === 'sucesso') {
+            mensagemElemento.classList.add('sucesso');
+        } else if (tipo === 'erro') {
+            mensagemElemento.classList.add('erro');
+        } else {
+            console.error('Tipo de mensagem inválido.');
+            return; // Encerra a execução se o tipo for inválido
+        }
 
-            // Anexe o elemento de mensagem ao container
-            container.appendChild(elementoMensagem);
+        // Defina o conteúdo da mensagem
+        mensagemElemento.textContent = conteudo;
 
-            // Remova a mensagem após alguns segundos
-            setTimeout(() => {
-                container.removeChild(elementoMensagem);
-            }, 3000); // Remove a mensagem após 3 segundos (ajuste o tempo conforme necessário)
-        },
+        // Adicione a mensagem ao corpo do documento (você pode personalizar onde deseja exibir)
+        document.body.appendChild(mensagemElemento);
 
+        // Remova a mensagem após um determinado período (opcional)
+        setTimeout(() => {
+            mensagemElemento.remove();
+        }, 5000); // Remove a mensagem após 5 segundos (ajuste o tempo conforme necessário)
+    },
 
     //atualiza o badge de totais dos botoes "Meu carrinho"
     atualizarBadgeTotal: () => {
@@ -274,7 +283,7 @@ cardapio.metodos = {
 
                 $("#itensCarrinho").append(temp);
 
-                if ((i + 1 ) ==MEU_CARRINHO.length) {
+                if ((i + 1) == MEU_CARRINHO.length) {
                     cardapio.metodos.carregarValores();
 
                 }
@@ -311,9 +320,9 @@ cardapio.metodos = {
     },
 
     removeItemCarrinho: (id) => {
-        MEU_CARRINHO = $.grep(MEU_CARRINHO, (e, i) => { return e.id != id}); 
+        MEU_CARRINHO = $.grep(MEU_CARRINHO, (e, i) => { return e.id != id });
         cardapio.metodos.carregarCarrinho()
-        
+
         cardapio.metodos.atualizarBadgeTotal()
 
     },
@@ -329,7 +338,53 @@ cardapio.metodos = {
 
         cardapio.metodos.carregarValores();
     },
+
+    carregarEndereco: () => {
+        if (MEU_CARRINHO.length <= 0) {
+            cardapio.metodos.mensagem('erro', 'Seu carrinho está vazio!')
+            return
+        }
+        cardapio.metodos.carregarEtapa(2);
+    },
+
+
+    //API ViaCEP
+
+    buscarCep: () => {
+
+    let cep = $("#txtCEP").val().trim().replace(/\D/g, '');
+
+    if (cep === "") {
+        cardapio.metodos.mensagem('erro', 'CEP não informado');
+        return;
+    }
+
+    let validarCEP = /^[0-9]{8}$/;
+    if (!validarCEP.test(cep)) {
+        cardapio.metodos.mensagem('erro', 'Formato do CEP inválido');
+        return;
+    }
+
+    $.getJSON(`https://viacep.com.br/ws/${cep}/json/?callback=?`, function (dados) {
+
+            if (!("erro" in dados)) {
+                // Atualizar os campos do formulário com os valores retornados
+                $("#txtEndereco").val(dados.logradouro);
+                $("#txtBairro").val(dados.bairro);
+                $("#txtCidade").val(dados.localidade);
+
+                $("#txtNumero").focus();
+
+            } 
+            else
+             {
+                cardapio.metodos.mensagem('erro', 'CEP não encontrado, preencha as informações manualmente');
+                $("#txtEndereco").focus();
+            }
+        })
+},
 }
+
 
 cardapio.templates = {
 

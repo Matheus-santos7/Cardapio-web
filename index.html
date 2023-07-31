@@ -407,7 +407,7 @@
                         <div class="form-group container-cep">
                             <label>CEP:</label>
                             <input type="text" id="txtCEP" class="form-control" alt="CEP"/>
-                            <a class="btn btn-yellow btn-sm"><I class="fa fa-search"> </I></a>
+                            <a class="btn btn-yellow btn-sm" onclick="cardapio.metodos.buscarCep()"><I class="fa fa-search"> </I></a>
                         </div>
                     </div>
                     <div class="col-8"></div>
@@ -525,7 +525,7 @@
                         <span class="valor-total"><b id="lblValorTotal">R$ 0,00</b></span>
                     </p>
                 </div>
-                <a onclick="cardapio.metodos.carregarEtapa(2)"  class="btn btn-yellow float-right mx-2" id="btnEtapaPedido">
+                <a onclick="cardapio.metodos.carregarEndereco()"  class="btn btn-yellow float-right mx-2" id="btnEtapaPedido">
                     Continuar
                 </a>
                 <a onclick="cardapio.metodos.carregarEtapa(3)" class="btn btn-yellow float-right mx-2 hidden" id="btnEtapaEndereco">
