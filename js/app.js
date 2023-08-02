@@ -351,38 +351,44 @@ cardapio.metodos = {
     //API ViaCEP
 
     buscarCep: () => {
+        let cep = $("#txtCEP").val().trim().replace(/\D/g, '');
 
-    let cep = $("#txtCEP").val().trim().replace(/\D/g, '');
+        if (cep === "") {
+            cardapio.metodos.mensagem('erro', 'CEP não informado');
+            return;
+        }
 
-    if (cep === "") {
-        cardapio.metodos.mensagem('erro', 'CEP não informado');
-        return;
-    }
+        let validarCEP = /^[0-9]{8}$/;
+        if (!validarCEP.test(cep)) {
+            cardapio.metodos.mensagem('erro', 'Formato do CEP inválido');
+            return;
+        }
 
-    let validarCEP = /^[0-9]{8}$/;
-    if (!validarCEP.test(cep)) {
-        cardapio.metodos.mensagem('erro', 'Formato do CEP inválido');
-        return;
-    }
-
-    $.getJSON(`https://viacep.com.br/ws/${cep}/json/?callback=?`, function (dados) {
+        $.getJSON(`https://viacep.com.br/ws/${cep}/json/?callback=?`, function (dados) {
 
             if (!("erro" in dados)) {
                 // Atualizar os campos do formulário com os valores retornados
                 $("#txtEndereco").val(dados.logradouro);
                 $("#txtBairro").val(dados.bairro);
                 $("#txtCidade").val(dados.localidade);
+                $("#ddlUF").val(dados.uf);
 
-                $("#txtNumero").focus();
+                if (dados.logradouro === "") {
+                    $("#txtEndereco").focus();
 
-            } 
-            else
-             {
+                }
+                else {
+                    $("#txtNumero").focus();
+
+                }
+
+            } else {
                 cardapio.metodos.mensagem('erro', 'CEP não encontrado, preencha as informações manualmente');
                 $("#txtEndereco").focus();
             }
-        })
-},
+        });
+    },
+
 }
 
 

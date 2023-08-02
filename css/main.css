@@ -21,7 +21,7 @@
     --color-primary: #ffbf00;
     --color-secondary: #fff2cc;
     --color-white: #ffffff;
-    --color-red: #e74c3c;
+    --color-red: #ec301bd9;
     --color-green: #2ecc71;
     --color-separate: #cccccc;
 }
@@ -814,8 +814,7 @@ select.form-control {
     position: fixed;
     right: 5px;
     top: 20px;
-    transform: translateX(-50%);
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 50px;
     color: #fff;
     font-weight: bold;
@@ -823,10 +822,10 @@ select.form-control {
   }
   
   .sucesso {
-    background-color: green;
+    background-color: var(--color-green);
   }
   
   .erro {
-    background-color: red;
+    background-color: var(--color-red);
   }
   
