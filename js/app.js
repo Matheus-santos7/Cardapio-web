@@ -10,6 +10,8 @@ var VALOR_CARRINHO = 0;
 
 var VALOR_ENTREGA = 5;
 
+var MEU_ENDERECO = null;
+
 cardapio.eventos = {
     init: function () {
         cardapio.metodos.obterItensCardapio();
@@ -143,34 +145,6 @@ cardapio.metodos = {
         })
     },
 
-    // Função para mostrar a notificação
-
-    mensagem: (tipo, conteudo) => {
-        let mensagemElemento = document.createElement('div');
-        mensagemElemento.classList.add('mensagem');
-
-        // Defina as classes de estilo com base no tipo de mensagem
-        if (tipo === 'sucesso') {
-            mensagemElemento.classList.add('sucesso');
-        } else if (tipo === 'erro') {
-            mensagemElemento.classList.add('erro');
-        } else {
-            console.error('Tipo de mensagem inválido.');
-            return; // Encerra a execução se o tipo for inválido
-        }
-
-        // Defina o conteúdo da mensagem
-        mensagemElemento.textContent = conteudo;
-
-        // Adicione a mensagem ao corpo do documento (você pode personalizar onde deseja exibir)
-        document.body.appendChild(mensagemElemento);
-
-        // Remova a mensagem após um determinado período (opcional)
-        setTimeout(() => {
-            mensagemElemento.remove();
-        }, 5000); // Remove a mensagem após 5 segundos (ajuste o tempo conforme necessário)
-    },
-
     //atualiza o badge de totais dos botoes "Meu carrinho"
     atualizarBadgeTotal: () => {
 
@@ -240,6 +214,7 @@ cardapio.metodos = {
 
         }
         if (etapa == 3) {
+
             $("#lblTituloEtapa").text("Resumo do pedido:");
             $("#itensCarrinho").addClass("hidden");
             $("#localEntrega").addClass("hidden");
@@ -347,9 +322,7 @@ cardapio.metodos = {
         cardapio.metodos.carregarEtapa(2);
     },
 
-
     //API ViaCEP
-
     buscarCep: () => {
         let cep = $("#txtCEP").val().trim().replace(/\D/g, '');
 
@@ -388,6 +361,118 @@ cardapio.metodos = {
             }
         });
     },
+
+    resumoPedido: () => {
+        let Endereco = $("#txtEndereco").val().trim();
+        let Bairro = $("#txtBairro").val().trim();
+        let CEP = $("#txtCEP").val().trim();
+        let Cidade = $("#txtCidade").val().trim();
+        let ddlUF = $("#ddlUF").val().trim();
+        let Numero = $("#txtNumero").val().trim();
+        let Complemento = $("#txtComplemento").val().trim();
+
+        if (CEP.length <= 0) {
+            cardapio.metodos.mensagem('erro', 'Informe o CEP, por favor');
+            $("#txtCEP").focus();
+            return;
+        }
+        if (Endereco.length <= 0) {
+            cardapio.metodos.mensagem('erro', 'Informe o Endereco, por favor');
+            $("#txtEndereco").focus();
+            return;
+        }
+        if (Bairro.length <= 0) {
+            cardapio.metodos.mensagem('erro', 'Informe o Bairro, por favor');
+            $("#txtBairro").focus();
+            return;
+        }
+        if (Numero.length <= 0) {
+            cardapio.metodos.mensagem('erro', 'Informe o Numero, por favor');
+            $("#txtNumero").focus();
+            return;
+        }
+        if (Cidade.length <= 0) {
+            cardapio.metodos.mensagem('erro', 'Informe a Cidade, por favor');
+            $("#txtCidade").focus();
+            return;
+        }
+        if (Complemento.length <= 0) {
+            cardapio.metodos.mensagem('erro', 'Informe o Complemento, por favor');
+            $("#txtComplemento").focus();
+            return;
+        }
+        if (ddlUF == "-1") {
+            cardapio.metodos.mensagem('erro', 'Informe a UF, por favor');
+            $("#txtddlUF").focus();
+            return;
+        }
+        else {
+            cardapio.metodos.carregarEtapa(3)
+        }
+
+        MEU_ENDERECO = {
+            CEP: CEP,
+            Endereco: Endereco,
+            Bairro: Bairro,
+            Cidade: Cidade,
+            ddlUF: ddlUF,
+            Numero: Numero,
+            Complemento: Complemento
+        }
+
+        cardapio.metodos.carregarEtapa(3);
+        cardapio.metodos.carregarResumo();
+    },
+
+    carregarResumo: () => {
+
+        $("#listaItensResumo").html('');
+
+        $.each(MEU_CARRINHO, (i, e) => {
+
+            let temp = cardapio.templates.itemResumo
+                .replace(/\${img}/g, e.img)
+                .replace(/\${name}/g, e.name)
+                .replace(/\${price}/g, e.price.toFixed(2).replace('.', ','))
+                .replace(/\${qntd}/g, e.qntd);
+
+            $("#listaItensResumo").append(temp);
+
+        });
+
+        $("#resumoEndereco").html(`${MEU_ENDERECO.Endereco}, ${MEU_ENDERECO.Numero}, Bairro: ${MEU_ENDERECO.Bairro}`);
+        $("#cidadeEndereco").html(`${MEU_ENDERECO.Cidade}/${MEU_ENDERECO.ddlUF}, ${MEU_ENDERECO.CEP} - Complemento: ${MEU_ENDERECO.Complemento}`)
+
+
+    },
+
+    // Função para mostrar a notificação
+    mensagem: (tipo, conteudo) => {
+        let mensagemElemento = document.createElement('div');
+        mensagemElemento.classList.add('mensagem');
+
+        // Defina as classes de estilo com base no tipo de mensagem
+        if (tipo === 'sucesso') {
+            mensagemElemento.classList.add('sucesso');
+        } else if (tipo === 'erro') {
+            mensagemElemento.classList.add('erro');
+        } else {
+            console.error('Tipo de mensagem inválido.');
+            return; // Encerra a execução se o tipo for inválido
+        }
+
+        // Defina o conteúdo da mensagem
+        mensagemElemento.textContent = conteudo;
+
+        // Adicione a mensagem ao corpo do documento (você pode personalizar onde deseja exibir)
+        document.body.appendChild(mensagemElemento);
+
+        // Remova a mensagem após um determinado período (opcional)
+        setTimeout(() => {
+            mensagemElemento.remove();
+        }, 5000); // Remove a mensagem após 5 segundos (ajuste o tempo conforme necessário)
+    },
+
 
 }
 
@@ -432,7 +517,27 @@ cardapio.templates = {
             <span class="btn-mais" onclick="cardapio.metodos.aumentarQuantidadeCarrinho('\${id}')"><i class="fas fa-plus"></i></span>
             <span class="btn btn-remove" onclick="cardapio.metodos.removeItemCarrinho('\${id}')"><i class="fa fa-times"></i></span>
         </div>
-    </div>`
+    </div>`,
+
+    itemResumo: `
+    <div class="col-12 item-carrinho resumo">
+        <div class="img-produto-resumo">
+            <img src="\${img}">
+        </div>
+        <div class="dados-produto">
+            <p class="title-produto-resumo">
+                <b>\${name}</b>
+            </p>
+            <p class="price-produto-resumo">
+                <b>R$ \${price}</b> 
+            </p>
+        </div>
+            <p class="quantidade-produto-resumo">
+                x
+                <b>\${qntd}</b>
+            </p>
+        </div>
+    `
 }
 
 

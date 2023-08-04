@@ -489,31 +489,12 @@
                     </div>
 
                     <div class="col-12">
-                        <div class="row" id="listaItensResumo">
-
-                            <div class="col-12 item-carrinho resumo">
-                                <div class="img-produto-resumo">
-                                    <img src="./img/cardapio/burguers/burger-au-poivre-kit-4-pack.3ca0e39b02db753304cd185638dad518.jpg" alt="burger">
-                                </div>
-                                <div class="dados-produto">
-                                    <p class="title-produto-resumo">
-                                        <b>Nome do Produto</b>
-                                    </p>
-                                    <p class="price-produto-resumo">
-                                        <b>R$ 0,00</b>
-                                    </p>
-                                </div>
-                                <p class="quantidade-produto-resumo">
-                                    x <b>3</b>
-                                </p>
-                            </div>
-
-                        </div>
+                        <div class="row" id="listaItensResumo"></div>
                     </div>
 
                     <div class="col-12">
                         <p class="title-carrinho mt-4">
-                            <b>Local da entrega:</b>
+                            <b></b>
                         </p>
                     </div>
 
@@ -523,11 +504,9 @@
                         </div>
                         <div class="dados-produto">
                             <p class="texto-endereco">
-                                <b id="resumoEndereco">Rua, teste, 300, bairro teste</b>
+                                <b id="resumoEndereco"></b>
                             </p>
-                            <p class="cidade-endereco" id="cidadeEndereco">
-                                Cidade-MG / 375777999
-                            </p>
+                            <p class="cidadeEndereco" id="cidadeEndereco"></p>
                         </div>
                     </div>
                     
@@ -555,7 +534,7 @@
                 <a onclick="cardapio.metodos.carregarEndereco()"  class="btn btn-yellow float-right mx-2" id="btnEtapaPedido">
                     Continuar
                 </a>
-                <a onclick="cardapio.metodos.carregarEtapa(3)" class="btn btn-yellow float-right mx-2 hidden" id="btnEtapaEndereco">
+                <a onclick="cardapio.metodos.resumoPedido()" class="btn btn-yellow float-right mx-2 hidden" id="btnEtapaEndereco">
                     Revisar pedido
                 </a>
                 <a onclick="" class="btn btn-green float-right hidden" id="btnEtapaResumo">
