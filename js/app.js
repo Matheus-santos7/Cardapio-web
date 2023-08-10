@@ -12,9 +12,13 @@ var VALOR_ENTREGA = 5;
 
 var MEU_ENDERECO = null;
 
+var CELULAR_EMPRESA = '5531983134505'
+
 cardapio.eventos = {
     init: function () {
         cardapio.metodos.obterItensCardapio();
+        cardapio.metodos.carregarBotaoReserva();
+        cardapio.metodos.carregarBotaoLigar();
     }
 };
 
@@ -344,7 +348,7 @@ cardapio.metodos = {
                 $("#txtEndereco").val(dados.logradouro);
                 $("#txtBairro").val(dados.bairro);
                 $("#txtCidade").val(dados.localidade);
-                $("#ddlUF").val(dados.uf);
+                $("#ddlUf").val(dados.uf);
 
                 if (dados.logradouro === "") {
                     $("#txtEndereco").focus();
@@ -367,7 +371,7 @@ cardapio.metodos = {
         let Bairro = $("#txtBairro").val().trim();
         let CEP = $("#txtCEP").val().trim();
         let Cidade = $("#txtCidade").val().trim();
-        let ddlUF = $("#ddlUF").val().trim();
+        let ddlUF = $("#ddlUf").val().trim();
         let Numero = $("#txtNumero").val().trim();
         let Complemento = $("#txtComplemento").val().trim();
 
@@ -443,6 +447,61 @@ cardapio.metodos = {
         $("#resumoEndereco").html(`${MEU_ENDERECO.Endereco}, ${MEU_ENDERECO.Numero}, Bairro: ${MEU_ENDERECO.Bairro}`);
         $("#cidadeEndereco").html(`${MEU_ENDERECO.Cidade}/${MEU_ENDERECO.ddlUF}, ${MEU_ENDERECO.CEP} - Complemento: ${MEU_ENDERECO.Complemento}`)
 
+        cardapio.metodos.finalizarPedido();
+    },
+
+    finalizarPedido: () => {
+        if (MEU_CARRINHO.length > 0 && MEU_ENDERECO != null) {
+            var texto = 'Olá gostaria de fazer um pedido:';
+            texto += '\n*Itens do pedido:*\n\n\${itens}';
+            texto += '\n*Endereço de entrega:*';
+            texto += `\n${MEU_ENDERECO.Endereco}, ${MEU_ENDERECO.Numero}, Bairro: ${MEU_ENDERECO.Bairro}`;
+            texto += `\n${MEU_ENDERECO.Cidade}/${MEU_ENDERECO.ddlUF}, ${MEU_ENDERECO.CEP} - Complemento: ${MEU_ENDERECO.Complemento}`;
+            texto += `\n\n*Total (com entrega): R$ ${(VALOR_CARRINHO + VALOR_ENTREGA).toFixed(2).replace(',', '.')}*`;
+    
+            var itens = '';
+            $.each(MEU_CARRINHO, (i, e) => {
+                itens += `*${e.qntd}x* ${e.name} ........ R$ ${e.price.toFixed(2).replace('.', ', ')} \n`;
+            });
+    
+            texto = texto.replace(/\${itens}/g, itens);
+            
+
+            //converte a URL
+            let encode = encodeURI(texto);
+            let URL = `https://wa.me/${CELULAR_EMPRESA}?text=${encode}`
+
+            $('#btnEtapaResumo').attr('href', URL);
+        }
+    },
+    
+    carregarBotaoReserva: () => {
+
+        var texto ='Olá, gostaria de fazer uma reserva';
+        let encode = encodeURI(texto) 
+        let URL =`https://wa.me/${CELULAR_EMPRESA}?text=${encode}`
+
+        $('#btnReserva').attr('href',URL)
+ 
+    },
+
+    carregarBotaoLigar: () => {
+        $('#btnLigar').attr('href', `tel:${CELULAR_EMPRESA}`);
+    },
+
+    abrirDepoimento: (depoimento) => {
+
+        $('#depoimento-1').addClass("hidden");
+        $('#depoimento-2').addClass("hidden");
+        $('#depoimento-3').addClass("hidden");
+
+        $('#btnDepoimento-1').removeClass("active");
+        $('#btnDepoimento-2').removeClass("active");
+        $('#btnDepoimento-3').removeClass("active");
+
+
+        $("#depoimento-" + depoimento).removeClass("hidden");
+        $("#btnDepoimento-" + depoimento).addClass("active");
 
     },
 
@@ -480,64 +539,62 @@ cardapio.metodos = {
 cardapio.templates = {
 
     item: `
-    <div class="col-3 mb-3">
-        <div class="card card-item" id="\${id}">
+        <div class="col-12 col-lg-3 col-md-3 col-sm-6 mb-5 animated fadeInUp">
+            <div class="card card-item" id="\${id}">
+                <div class="img-produto">
+                    <img src="\${img}" />
+                </div>
+                <p class="title-produto text-center mt-4">
+                    <b>\${name}</b>
+                </p>
+                <p class="price-produto text-center">
+                    <b>R$ \${price}</b>
+                </p>
+                <div class="add-carrinho">
+                    <span class="btn-menos" onclick="cardapio.metodos.diminuirQuantidade('\${id}')"><i class="fas fa-minus"></i></span>
+                    <span class="add-numero-itens" id="qntd-\${id}">0</span>
+                    <span class="btn-mais" onclick="cardapio.metodos.aumentarQuantidade('\${id}')"><i class="fas fa-plus"></i></span>
+                    <span class="btn btn-add" onclick="cardapio.metodos.adicionarAoCarrinho('\${id}')"><i class="fa fa-shopping-bag"></i></span>
+                </div>
+            </div>
+        </div>
+    `,
+
+    itemCarrinho: `
+        <div class="col-12 item-carrinho">
             <div class="img-produto">
                 <img src="\${img}" />
             </div>
-            <p class="title-produto text-center mt-4">
-                <b>\${name}</b>
-            </p>
-            <p class="price-produto text-center">
-                <b>R$ \${price}</b>
-            </p>
+            <div class="dados-produto">
+                <p class="title-produto"><b>\${name}</b></p>
+                <p class="price-produto"><b>R$ \${price}</b></p>
+            </div>
             <div class="add-carrinho">
-                <span class="btn-menos" onclick="cardapio.metodos.diminuirQuantidade('\${id}')"><i class="fas fa-minus"></i></span>
-                <span class="add-numero-itens" id="qntd-\${id}"><i></i>0</span>
-                <span class="btn-mais" onclick="cardapio.metodos.aumentarQuantidade('\${id}')"><i class="fas fa-plus"></i></span>
-                <span class="btn btn-add" onclick="cardapio.metodos.adicionarAoCarrinho('\${id}')"><i class="fa fa-shopping-bag"></i></span>
+                <span class="btn-menos" onclick="cardapio.metodos.diminuirQuantidadeCarrinho('\${id}')"><i class="fas fa-minus"></i></span>
+                <span class="add-numero-itens" id="qntd-carrinho-\${id}">\${qntd}</span>
+                <span class="btn-mais" onclick="cardapio.metodos.aumentarQuantidadeCarrinho('\${id}')"><i class="fas fa-plus"></i></span>
+                <span class="btn btn-remove no-mobile" onclick="cardapio.metodos.removerItemCarrinho('\${id}')"><i class="fa fa-times"></i></span>
             </div>
         </div>
-    </div>`,
-
-    itemCarrinho: `
-    <div class="col-12 item-carrinho ">
-        <div class="produto-container d-flex">
-            <div class="img-produto">
-                <img src="\${img}" alt="hamburgue">
-        </div>
-        <div class="dados-produto ml-2 mt-4">
-            <p class="title-produto"><b>\${name}</b></p>
-            <p class="price-produto"><b>R$ \${price}</b></p>
-        </div>
-    </div>
-        <div class="add-carrinho">
-            <span class="btn-menos" onclick="cardapio.metodos.diminuirQuantidadeCarrinho('\${id}')"><i class="fas fa-minus"></i></span>
-            <span class="add-numero-itens" id="qntd-carrinho-\${id}"><i></i>\${qntd}</span>
-            <span class="btn-mais" onclick="cardapio.metodos.aumentarQuantidadeCarrinho('\${id}')"><i class="fas fa-plus"></i></span>
-            <span class="btn btn-remove" onclick="cardapio.metodos.removeItemCarrinho('\${id}')"><i class="fa fa-times"></i></span>
-        </div>
-    </div>`,
+    `,
 
     itemResumo: `
-    <div class="col-12 item-carrinho resumo">
-        <div class="img-produto-resumo">
-            <img src="\${img}">
-        </div>
-        <div class="dados-produto">
-            <p class="title-produto-resumo">
-                <b>\${name}</b>
-            </p>
-            <p class="price-produto-resumo">
-                <b>R$ \${price}</b> 
-            </p>
-        </div>
+        <div class="col-12 item-carrinho resumo">
+            <div class="img-produto-resumo">
+                <img src="\${img}" />
+            </div>
+            <div class="dados-produto">
+                <p class="title-produto-resumo">
+                    <b>\${name}</b>
+                </p>
+                <p class="price-produto-resumo">
+                    <b>R$ \${price}</b>
+                </p>
+            </div>
             <p class="quantidade-produto-resumo">
-                x
-                <b>\${qntd}</b>
+                x <b>\${qntd}</b>
             </p>
         </div>
     `
+
 }
-
-
